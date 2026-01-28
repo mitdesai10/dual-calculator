@@ -232,6 +232,68 @@ function calculateBlendedRate() {
     } else {
         breakdownSection.style.display = 'none';
     }
+
+    // Show/hide margin section based on whether we have data
+    const marginSection = document.getElementById('blendedMarginSection');
+    if (activeRoles > 0 && totalHours > 0) {
+        marginSection.style.display = 'block';
+        // Recalculate margin if already entered
+        calculateBlendedMargin();
+    } else {
+        marginSection.style.display = 'none';
+    }
+}
+
+function calculateBlendedMargin() {
+    const targetMarginPercent = parseFloat(document.getElementById('blendedTargetMargin')?.value) || 0;
+    
+    if (targetMarginPercent <= 0) {
+        document.getElementById('blendedMarginResults').style.display = 'none';
+        return;
+    }
+
+    // Get blended cost rate and total hours
+    const blendedCostRate = parseFloat(document.getElementById('blendedRateValue').textContent.replace('$', '')) || 0;
+    const totalHours = parseFloat(document.getElementById('blendedTotalHours').textContent) || 0;
+    const totalCost = parseFloat(document.getElementById('blendedTotalCost').textContent.replace('$', '')) || 0;
+
+    if (blendedCostRate === 0 || totalHours === 0) {
+        return;
+    }
+
+    // Calculate client charge rate based on margin
+    // Formula: ChargeRate = Cost / (1 - Margin)
+    const targetMargin = targetMarginPercent / 100;
+    const chargeRate = blendedCostRate / (1 - targetMargin);
+    const revenue = chargeRate;
+    const profit = chargeRate - blendedCostRate;
+
+    // Calculate totals
+    const monthlyCost = totalCost;
+    const monthlyRevenue = chargeRate * totalHours;
+    const monthlyProfit = monthlyRevenue - monthlyCost;
+    
+    const annualCost = monthlyCost * 12;
+    const annualRevenue = monthlyRevenue * 12;
+    const annualProfit = monthlyProfit * 12;
+
+    // Update display
+    document.getElementById('blendedChargeRate').textContent = `$${chargeRate.toFixed(2)}`;
+    document.getElementById('marginBlendedCost').textContent = `$${blendedCostRate.toFixed(2)}/hr`;
+    document.getElementById('marginBlendedRevenue').textContent = `$${revenue.toFixed(2)}/hr`;
+    document.getElementById('marginBlendedProfit').textContent = `$${profit.toFixed(2)}/hr`;
+    document.getElementById('marginBlendedPercent').textContent = `${targetMarginPercent.toFixed(0)}%`;
+
+    // Update project totals
+    document.getElementById('blendedMonthlyCost').textContent = `$${monthlyCost.toFixed(2)}`;
+    document.getElementById('blendedMonthlyRevenue').textContent = `$${monthlyRevenue.toFixed(2)}`;
+    document.getElementById('blendedMonthlyProfit').textContent = `$${monthlyProfit.toFixed(2)}`;
+    
+    document.getElementById('blendedAnnualCost').textContent = `$${annualCost.toFixed(2)}`;
+    document.getElementById('blendedAnnualRevenue').textContent = `$${annualRevenue.toFixed(2)}`;
+    document.getElementById('blendedAnnualProfit').textContent = `$${annualProfit.toFixed(2)}`;
+
+    document.getElementById('blendedMarginResults').style.display = 'block';
 }
 
 // ========================================
@@ -253,3 +315,4 @@ window.removeBlendedRole = removeBlendedRole;
 window.handleBlendedRoleChange = handleBlendedRoleChange;
 window.handleBlendedLocationChange = handleBlendedLocationChange;
 window.calculateBlendedRate = calculateBlendedRate;
+window.calculateBlendedMargin = calculateBlendedMargin;

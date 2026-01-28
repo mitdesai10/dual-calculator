@@ -305,9 +305,9 @@
                     <div class="results-title">📊 Your Blended Rate Results</div>
                     
                     <div class="main-result">
-                        <div class="main-result-label">Blended Rate</div>
+                        <div class="main-result-label">Blended Cost Rate</div>
                         <div class="main-result-value" id="blendedRateValue">$0.00</div>
-                        <div style="font-size: 14px; opacity: 0.85; margin-top: 5px;">per hour</div>
+                        <div style="font-size: 14px; opacity: 0.85; margin-top: 5px;">per hour (your cost)</div>
                     </div>
 
                     <div class="results-grid">
@@ -328,6 +328,80 @@
                     <div class="breakdown-section" id="blendedBreakdownSection" style="display: none;">
                         <div class="breakdown-title">Role Breakdown</div>
                         <div id="blendedBreakdownContainer"></div>
+                    </div>
+                </div>
+
+                <!-- Margin Calculator Section -->
+                <div class="blended-card" id="blendedMarginSection" style="display: none; margin-top: 20px;">
+                    <div class="section-title">
+                        <div class="step-number">2</div>
+                        <span>Calculate Client Charge Rate with Margin</span>
+                    </div>
+                    <p class="section-subtitle">Enter your desired margin % to calculate the client charge rate</p>
+
+                    <div class="margin-calculator-container">
+                        <div class="margin-input-section">
+                            <label for="blendedTargetMargin">Target Margin (%)</label>
+                            <input type="number" id="blendedTargetMargin" class="margin-input-large" placeholder="60" min="10" max="90" step="1" oninput="calculateBlendedMargin()">
+                            <small class="form-hint">Enter margin between 10% and 90%</small>
+                        </div>
+
+                        <div class="margin-results" id="blendedMarginResults" style="display: none;">
+                            <div class="margin-result-card primary-card">
+                                <div class="card-label">Client Charge Rate</div>
+                                <div class="card-value-large" id="blendedChargeRate">$0.00</div>
+                                <div class="card-sublabel">per hour</div>
+                            </div>
+
+                            <div class="margin-details-grid">
+                                <div class="margin-result-card">
+                                    <div class="card-label">Your Cost</div>
+                                    <div class="card-value" id="marginBlendedCost">$0.00/hr</div>
+                                </div>
+                                <div class="margin-result-card">
+                                    <div class="card-label">Revenue</div>
+                                    <div class="card-value" id="marginBlendedRevenue">$0.00/hr</div>
+                                </div>
+                                <div class="margin-result-card">
+                                    <div class="card-label">Profit</div>
+                                    <div class="card-value profit-value" id="marginBlendedProfit">$0.00/hr</div>
+                                </div>
+                                <div class="margin-result-card">
+                                    <div class="card-label">Margin</div>
+                                    <div class="card-value" id="marginBlendedPercent">0%</div>
+                                </div>
+                            </div>
+
+                            <div class="total-projections">
+                                <div class="projection-title">💰 Project Totals</div>
+                                <div class="projection-grid">
+                                    <div class="projection-item">
+                                        <span class="proj-label">Monthly Revenue:</span>
+                                        <span class="proj-value" id="blendedMonthlyRevenue">$0</span>
+                                    </div>
+                                    <div class="projection-item">
+                                        <span class="proj-label">Monthly Cost:</span>
+                                        <span class="proj-value" id="blendedMonthlyCost">$0</span>
+                                    </div>
+                                    <div class="projection-item highlight">
+                                        <span class="proj-label">Monthly Profit:</span>
+                                        <span class="proj-value profit" id="blendedMonthlyProfit">$0</span>
+                                    </div>
+                                    <div class="projection-item">
+                                        <span class="proj-label">Annual Revenue:</span>
+                                        <span class="proj-value" id="blendedAnnualRevenue">$0</span>
+                                    </div>
+                                    <div class="projection-item">
+                                        <span class="proj-label">Annual Cost:</span>
+                                        <span class="proj-value" id="blendedAnnualCost">$0</span>
+                                    </div>
+                                    <div class="projection-item highlight">
+                                        <span class="proj-label">Annual Profit:</span>
+                                        <span class="proj-value profit" id="blendedAnnualProfit">$0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
