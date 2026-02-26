@@ -235,12 +235,16 @@ function calculateBlendedRate() {
 
     // Show/hide margin section based on whether we have data
     const marginSection = document.getElementById('blendedMarginSection');
+    const exportButtons = document.getElementById('exportButtons');
+    
     if (activeRoles > 0 && totalHours > 0) {
         marginSection.style.display = 'block';
+        exportButtons.style.display = 'flex';
         // Recalculate margin if already entered
         calculateBlendedMargin();
     } else {
         marginSection.style.display = 'none';
+        exportButtons.style.display = 'none';
     }
 }
 
@@ -316,3 +320,262 @@ window.handleBlendedRoleChange = handleBlendedRoleChange;
 window.handleBlendedLocationChange = handleBlendedLocationChange;
 window.calculateBlendedRate = calculateBlendedRate;
 window.calculateBlendedMargin = calculateBlendedMargin;
+
+// ========================================
+// Export Functions
+// ========================================
+
+function exportToCSV() {
+    const roles = document.querySelectorAll('.role-item');
+    let csvContent = "data:text/csv;charset=utf-8,";
+    
+    // Header row
+    csvContent += "Role,Location,Rate ($/hr),Hours,Monthly Cost,Annual Cost\n";
+    
+    // Data rows
+    roles.forEach(role => {
+        const roleId = role.dataset.roleId;
+        const roleSelect = document.getElementById(`blended-role-select-${roleId}`);
+        const locationSelect = document.getElementById(`blended-location-${roleId}`);
+        const rateInput = document.getElementById(`blended-rate-${roleId}`);
+        const hoursInput = document.getElementById(`blended-hours-${roleId}`);
+        
+        const roleName = roleSelect ? (roleSelect.options[roleSelect.selectedIndex]?.text || '') : '';
+        const location = locationSelect ? (locationSelect.options[locationSelect.selectedIndex]?.text || '') : '';
+        const rate = parseFloat(rateInput?.value) || 0;
+        const hours = parseFloat(hoursInput?.value) || 0;
+        
+        if (roleName && rate > 0 && hours > 0) {
+            const monthlyCost = rate * hours;
+            const annualCost = monthlyCost * 12;
+            
+            csvContent += `"${roleName}","${location}",${rate},${hours},${monthlyCost.toFixed(2)},${annualCost.toFixed(2)}\n`;
+        }
+    });
+    
+    // Summary rows
+    const blendedRate = parseFloat(document.getElementById('blendedRateValue').textContent.replace('$', '')) || 0;
+    const totalHours = parseFloat(document.getElementById('blendedTotalHours').textContent) || 0;
+    const totalCost = parseFloat(document.getElementById('blendedTotalCost').textContent.replace('$', '')) || 0;
+    
+    csvContent += "\n";
+    csvContent += "Summary\n";
+    csvContent += `"Blended Cost Rate ($/hr)",,,${blendedRate.toFixed(2)}\n`;
+    csvContent += `"Total Hours",,,${totalHours}\n`;
+    csvContent += `"Total Monthly Cost",,,${totalCost.toFixed(2)}\n`;
+    csvContent += `"Total Annual Cost",,,${(totalCost * 12).toFixed(2)}\n`;
+    
+    // Check if margin is calculated
+    const marginInput = document.getElementById('blendedTargetMargin');
+    const targetMargin = parseFloat(marginInput?.value) || 0;
+    
+    if (targetMargin > 0) {
+        csvContent += "\n";
+        csvContent += "Margin Calculation\n";
+        csvContent += `"Target Margin (%)",,,${targetMargin}\n`;
+        
+        const chargeRate = parseFloat(document.getElementById('blendedChargeRate')?.textContent.replace('$', '')) || 0;
+        const monthlyRevenue = parseFloat(document.getElementById('blendedMonthlyRevenue')?.textContent.replace('$', '').replace(',', '')) || 0;
+        const monthlyProfit = parseFloat(document.getElementById('blendedMonthlyProfit')?.textContent.replace('$', '').replace(',', '')) || 0;
+        const annualRevenue = parseFloat(document.getElementById('blendedAnnualRevenue')?.textContent.replace('$', '').replace(',', '')) || 0;
+        const annualProfit = parseFloat(document.getElementById('blendedAnnualProfit')?.textContent.replace('$', '').replace(',', '')) || 0;
+        
+        csvContent += `"Client Charge Rate ($/hr)",,,${chargeRate.toFixed(2)}\n`;
+        csvContent += `"Monthly Revenue",,,${monthlyRevenue.toFixed(2)}\n`;
+        csvContent += `"Monthly Profit",,,${monthlyProfit.toFixed(2)}\n`;
+        csvContent += `"Annual Revenue",,,${annualRevenue.toFixed(2)}\n`;
+        csvContent += `"Annual Profit",,,${annualProfit.toFixed(2)}\n`;
+    }
+    
+    // Create download link
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `quote_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+function exportToExcel() {
+    const roles = document.querySelectorAll('.role-item');
+    
+    // Build HTML table
+    let tableHTML = `
+        <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+        <head>
+            <meta charset="utf-8">
+            <!--[if gte mso 9]>
+            <xml>
+                <x:ExcelWorkbook>
+                    <x:ExcelWorksheets>
+                        <x:ExcelWorksheet>
+                            <x:Name>Quote</x:Name>
+                            <x:WorksheetOptions>
+                                <x:DisplayGridlines/>
+                            </x:WorksheetOptions>
+                        </x:ExcelWorksheet>
+                    </x:ExcelWorksheets>
+                </x:ExcelWorkbook>
+            </xml>
+            <![endif]-->
+            <style>
+                table { border-collapse: collapse; width: 100%; }
+                th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                th { background-color: #4472C4; color: white; font-weight: bold; }
+                .summary-header { background-color: #70AD47; color: white; font-weight: bold; }
+                .total-row { background-color: #F2F2F2; font-weight: bold; }
+            </style>
+        </head>
+        <body>
+            <h2>Staffing Quote - ${new Date().toLocaleDateString()}</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Role</th>
+                        <th>Location</th>
+                        <th>Rate ($/hr)</th>
+                        <th>Hours</th>
+                        <th>Monthly Cost</th>
+                        <th>Annual Cost</th>
+                    </tr>
+                </thead>
+                <tbody>
+    `;
+    
+    // Add role data
+    roles.forEach(role => {
+        const roleId = role.dataset.roleId;
+        const roleSelect = document.getElementById(`blended-role-select-${roleId}`);
+        const locationSelect = document.getElementById(`blended-location-${roleId}`);
+        const rateInput = document.getElementById(`blended-rate-${roleId}`);
+        const hoursInput = document.getElementById(`blended-hours-${roleId}`);
+        
+        const roleName = roleSelect ? (roleSelect.options[roleSelect.selectedIndex]?.text || '') : '';
+        const location = locationSelect ? (locationSelect.options[locationSelect.selectedIndex]?.text || '') : '';
+        const rate = parseFloat(rateInput?.value) || 0;
+        const hours = parseFloat(hoursInput?.value) || 0;
+        
+        if (roleName && rate > 0 && hours > 0) {
+            const monthlyCost = rate * hours;
+            const annualCost = monthlyCost * 12;
+            
+            tableHTML += `
+                <tr>
+                    <td>${roleName}</td>
+                    <td>${location}</td>
+                    <td>$${rate.toFixed(2)}</td>
+                    <td>${hours}</td>
+                    <td>$${monthlyCost.toFixed(2)}</td>
+                    <td>$${annualCost.toFixed(2)}</td>
+                </tr>
+            `;
+        }
+    });
+    
+    // Summary section
+    const blendedRate = parseFloat(document.getElementById('blendedRateValue').textContent.replace('$', '')) || 0;
+    const totalHours = parseFloat(document.getElementById('blendedTotalHours').textContent) || 0;
+    const totalCost = parseFloat(document.getElementById('blendedTotalCost').textContent.replace('$', '')) || 0;
+    
+    tableHTML += `
+                </tbody>
+            </table>
+            <br>
+            <table>
+                <thead>
+                    <tr>
+                        <th colspan="2" class="summary-header">Summary</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Blended Cost Rate ($/hr)</strong></td>
+                        <td>$${blendedRate.toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Total Hours</strong></td>
+                        <td>${totalHours}</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td><strong>Total Monthly Cost</strong></td>
+                        <td>$${totalCost.toFixed(2)}</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td><strong>Total Annual Cost</strong></td>
+                        <td>$${(totalCost * 12).toFixed(2)}</td>
+                    </tr>
+    `;
+    
+    // Check if margin is calculated
+    const marginInput = document.getElementById('blendedTargetMargin');
+    const targetMargin = parseFloat(marginInput?.value) || 0;
+    
+    if (targetMargin > 0) {
+        const chargeRate = parseFloat(document.getElementById('blendedChargeRate')?.textContent.replace('$', '')) || 0;
+        const monthlyRevenue = parseFloat(document.getElementById('blendedMonthlyRevenue')?.textContent.replace('$', '').replace(',', '')) || 0;
+        const monthlyProfit = parseFloat(document.getElementById('blendedMonthlyProfit')?.textContent.replace('$', '').replace(',', '')) || 0;
+        const annualRevenue = parseFloat(document.getElementById('blendedAnnualRevenue')?.textContent.replace('$', '').replace(',', '')) || 0;
+        const annualProfit = parseFloat(document.getElementById('blendedAnnualProfit')?.textContent.replace('$', '').replace(',', '')) || 0;
+        
+        tableHTML += `
+                </tbody>
+            </table>
+            <br>
+            <table>
+                <thead>
+                    <tr>
+                        <th colspan="2" class="summary-header">Margin Calculation (${targetMargin}% Margin)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Client Charge Rate ($/hr)</strong></td>
+                        <td>$${chargeRate.toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Profit per Hour</strong></td>
+                        <td>$${(chargeRate - blendedRate).toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Monthly Revenue</strong></td>
+                        <td>$${monthlyRevenue.toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Monthly Profit</strong></td>
+                        <td>$${monthlyProfit.toFixed(2)}</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td><strong>Annual Revenue</strong></td>
+                        <td>$${annualRevenue.toFixed(2)}</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td><strong>Annual Profit</strong></td>
+                        <td>$${annualProfit.toFixed(2)}</td>
+                    </tr>
+        `;
+    }
+    
+    tableHTML += `
+                </tbody>
+            </table>
+        </body>
+        </html>
+    `;
+    
+    // Create download link
+    const blob = new Blob([tableHTML], { type: 'application/vnd.ms-excel' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `quote_${new Date().toISOString().split('T')[0]}.xls`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+}
+
+// Make export functions globally accessible
+window.exportToCSV = exportToCSV;
+window.exportToExcel = exportToExcel;
+

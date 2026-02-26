@@ -1396,3 +1396,74 @@ body {
         grid-template-columns: 1fr;
     }
 }
+
+/* ========================================
+   EXPORT BUTTONS STYLES
+   ======================================== */
+
+.export-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+}
+
+.export-btn {
+    background: white;
+    color: var(--primary);
+    border: 2px solid white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.export-btn:hover {
+    background: rgba(255, 255, 255, 0.9);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.export-btn:active {
+    transform: translateY(0);
+}
+
+.export-excel {
+    background: #217346;
+    color: white;
+    border-color: #217346;
+}
+
+.export-excel:hover {
+    background: #1a5c37;
+}
+
+.export-csv {
+    background: #0078D4;
+    color: white;
+    border-color: #0078D4;
+}
+
+.export-csv:hover {
+    background: #005a9e;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .export-buttons {
+        flex-direction: column;
+    }
+    
+    .export-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
