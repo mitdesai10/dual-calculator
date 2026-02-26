@@ -71,9 +71,9 @@ function addBlendedRole() {
                 <label for="blended-location-${blendedRoleCounter}">Location</label>
                 <select id="blended-location-${blendedRoleCounter}" class="form-control" onchange="handleBlendedLocationChange(${blendedRoleCounter})">
                     <option value="">Select location...</option>
-                    <option value="onshore">🏢 Onshore</option>
-                    <option value="offshore">🌏 Offshore</option>
-                    <option value="nearshore">🌎 Nearshore</option>
+                    <option value="onshore">Onshore</option>
+                    <option value="offshore">Offshore</option>
+                    <option value="nearshore">Nearshore</option>
                 </select>
             </div>
             <div class="input-group">
@@ -239,7 +239,7 @@ function calculateBlendedRate() {
     
     if (activeRoles > 0 && totalHours > 0) {
         marginSection.style.display = 'block';
-        exportButtons.style.display = 'flex';
+        // Don't show export buttons yet - only after margin is calculated
         // Recalculate margin if already entered
         calculateBlendedMargin();
     } else {
@@ -253,6 +253,7 @@ function calculateBlendedMargin() {
     
     if (targetMarginPercent <= 0) {
         document.getElementById('blendedMarginResults').style.display = 'none';
+        document.getElementById('exportButtons').style.display = 'none';
         return;
     }
 
@@ -298,6 +299,9 @@ function calculateBlendedMargin() {
     document.getElementById('blendedAnnualProfit').textContent = `$${annualProfit.toFixed(2)}`;
 
     document.getElementById('blendedMarginResults').style.display = 'block';
+    
+    // Show export buttons when margin is calculated
+    document.getElementById('exportButtons').style.display = 'flex';
 }
 
 // ========================================

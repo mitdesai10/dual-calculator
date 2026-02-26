@@ -1405,31 +1405,33 @@ body {
     display: flex;
     gap: 15px;
     justify-content: center;
-    margin-bottom: 20px;
-    padding: 15px;
-    background: rgba(255, 255, 255, 0.1);
+    margin-top: 30px;
+    padding: 25px;
+    background: white;
     border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .export-btn {
-    background: white;
-    color: var(--primary);
-    border: 2px solid white;
-    padding: 12px 24px;
+    background: var(--primary);
+    color: white;
+    border: 2px solid var(--primary);
+    padding: 14px 30px;
     border-radius: 8px;
     cursor: pointer;
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 600;
     transition: all 0.3s;
     display: flex;
     align-items: center;
     gap: 8px;
+    min-width: 180px;
+    justify-content: center;
 }
 
 .export-btn:hover {
-    background: rgba(255, 255, 255, 0.9);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
 
 .export-btn:active {
@@ -1438,32 +1440,32 @@ body {
 
 .export-pdf {
     background: #DC143C;
-    color: white;
     border-color: #DC143C;
 }
 
 .export-pdf:hover {
     background: #B22222;
+    border-color: #B22222;
 }
 
 .export-csv {
     background: #0078D4;
-    color: white;
     border-color: #0078D4;
 }
 
 .export-csv:hover {
     background: #005a9e;
+    border-color: #005a9e;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
     .export-buttons {
         flex-direction: column;
+        padding: 20px;
     }
     
     .export-btn {
         width: 100%;
-        justify-content: center;
     }
 }
