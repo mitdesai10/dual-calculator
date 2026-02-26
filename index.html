@@ -165,15 +165,15 @@
                                     <div class="radio-group">
                                         <label class="radio-option">
                                             <input type="radio" name="location" value="onshore" required>
-                                            <span>🏢 Onshore</span>
+                                            <span>Onshore</span>
                                         </label>
                                         <label class="radio-option">
                                             <input type="radio" name="location" value="offshore" required>
-                                            <span>🌏 Offshore</span>
+                                            <span>Offshore</span>
                                         </label>
                                         <label class="radio-option">
                                             <input type="radio" name="location" value="nearshore" required>
-                                            <span>🌎 Nearshore</span>
+                                            <span>Nearshore</span>
                                         </label>
                                     </div>
                                 </div>
@@ -302,15 +302,15 @@
                 </div>
 
                 <div class="results-card">
-                    <div class="results-title">📊 Your Blended Rate Results</div>
+                    <div class="results-title">Your Blended Rate Results</div>
                     
                     <!-- Export Buttons -->
                     <div class="export-buttons" id="exportButtons" style="display: none;">
-                        <button class="export-btn export-excel" onclick="exportToExcel()">
-                            📥 Export to Excel
+                        <button class="export-btn export-pdf" onclick="exportToPDF()">
+                            Export to PDF
                         </button>
                         <button class="export-btn export-csv" onclick="exportToCSV()">
-                            📄 Export to CSV
+                            Export to CSV
                         </button>
                     </div>
                     
@@ -431,5 +431,6 @@
     <script src="sheetsLoader__1_.js"></script>
     <script src="script__2_.js"></script>
     <script src="script-blended.js"></script>
+    <script src="script-export.js"></script>
 </body>
 </html>

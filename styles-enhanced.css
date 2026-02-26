@@ -1436,14 +1436,14 @@ body {
     transform: translateY(0);
 }
 
-.export-excel {
-    background: #217346;
+.export-pdf {
+    background: #DC143C;
     color: white;
-    border-color: #217346;
+    border-color: #DC143C;
 }
 
-.export-excel:hover {
-    background: #1a5c37;
+.export-pdf:hover {
+    background: #B22222;
 }
 
 .export-csv {
